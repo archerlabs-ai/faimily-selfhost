@@ -81,7 +81,7 @@ SearXNG is already running as part of the stack. To connect it:
    not localhost).
 4. Save and test with a query in a chat.
 
-## 7. Set up remote access with Tailscale
+## 7. Set up remote access with Tailscale (OPTIONAL)
 
 Your fAImily stack only runs on your home network by default. For your kid
 to reach it from school, a friend's house, or anywhere off your home wifi,
