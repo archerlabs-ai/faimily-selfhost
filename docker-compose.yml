@@ -1,0 +1,51 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: faimily-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    # Uncomment the block below if you have an NVIDIA GPU on Linux/WSL
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: faimily-webui
+    restart: unless-stopped
+    # Note: 8080 here is open-webui's INTERNAL port (left side of the colon
+    # is your machine, right side is inside the container). It is not the
+    # same 8080 that searxng uses below. No actual conflict, just easy to
+    # misread at a glance.
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_AUTH=true
+    volumes:
+      - webui-data:/app/backend/data
+    depends_on:
+      - ollama
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: faimily-search
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - searxng-data:/etc/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+
+volumes:
+  ollama-data:
+  webui-data:
+  searxng-data:
