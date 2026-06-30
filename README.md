@@ -41,6 +41,7 @@ internet goes out, it still works.
     ```
 
 2. Start the stack:
+   Start Docker, then run:
 
     ```
     docker compose up -d
@@ -52,7 +53,8 @@ internet goes out, it still works.
     docker exec -it faimily-ollama ollama pull llama3.2:3b
     ```
 
-4. Open `http://localhost:3000` and create your parent account. The first
+4. Open `http://localhost:3000` (or `http://<SERVER_IP>:3000` from another device
+   on your network — see `docs/setup-guide.md`) and create your parent account. The first
    account created is the admin account, this should be you.
 
 5. Follow `docs/setup-guide.md` to create your kids' accounts, set up groups,
