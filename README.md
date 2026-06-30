@@ -25,6 +25,13 @@ This is not a parental control app that filters the open web. It's not a
 wrapper around ChatGPT. There is no cloud endpoint in this stack. If your
 internet goes out, it still works.
 
+On remote access: Tailscale relies on its own coordination servers to
+help your devices find each other, but your actual chat traffic does
+not pass through them. Connections run device-to-device over an
+encrypted WireGuard tunnel. Tailscale sees enough metadata to connect
+your devices, it does not see what you or your kids are talking about
+with the AI.
+
 ## Requirements
 
 - Docker and Docker Compose installed ([get Docker](https://docs.docker.com/get-docker/))
@@ -67,7 +74,7 @@ internet goes out, it still works.
 ```
 docker-compose.yml      The full stack: Ollama, Open WebUI, SearXNG
 modelfiles/              Template Modelfiles for child profiles, by age tier
-docs/setup-guide.md      Full walkthrough: accounts, groups, permissions
+docs/setup-guide.md      Full walkthrough: accounts, permissions
 docs/model-guide.md      Which model to run based on your hardware
 ```
 

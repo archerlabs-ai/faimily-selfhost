@@ -13,6 +13,8 @@ personalized model anyway.
         Find your server's (LAN) IP address (Ex: `192.168.x.x` or `10.x.x.x`):
         - **Linux** — run `ip addr show | grep 'inet '`
         - **macOS** — run `ipconfig getifaddr en0`
+            If this returns nothing, run `ifconfig` and look for the IP under your
+            active network interface (often en0 for WiFi or en1 for Ethernet).
         - **Windows** — run `ipconfig` and look for `IPv4 Address` under your active network adapter
 
 2. The first account you create becomes the admin account. This should be
