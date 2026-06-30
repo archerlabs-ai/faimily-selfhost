@@ -16,6 +16,7 @@ for updates.
 - A private AI chat assistant that runs entirely on your own hardware
 - Per-child profiles with guardrails enforced at the model layer, not a content filter
 - Private web search that never leaves your home network
+- Secure remote access from anywhere via Tailscale, no public exposure, no port forwarding
 - No cloud account, no API keys, no subscription required for this setup
 
 ## What this is not
@@ -57,8 +58,9 @@ internet goes out, it still works.
    on your network — see `docs/setup-guide.md`) and create your parent account. The first
    account created is the admin account, this should be you.
 
-5. Follow `docs/setup-guide.md` to create your kids' accounts, set up groups,
-   and apply the child Modelfiles from the `modelfiles/` folder.
+5. Follow `docs/setup-guide.md` to create your kids' accounts, set up
+   model permissions, apply the child Modelfiles from the `modelfiles/`
+   folder, and connect Tailscale for remote access.
 
 ## Repo structure
 

@@ -71,20 +71,7 @@ Open WebUI has an admin-only view that shows exactly what a user can see.
 3. Confirm the only model listed is their own `faimily-kidname` model, not
    the base model and not any sibling's model.
 
-## 6. Connect from other devices on your network
-
-Once the stack is running, any device on your home network can reach the web UI:
-
-1. On the device you want to connect from (phone, tablet, laptop), open a browser.
-2. Go to `http://<SERVER_IP>:3000` — replace `<SERVER_IP>` with the IP you found in step 1.
-3. Log in with the account you created for that child (or create a new one if you haven't yet).
-
-Docker binds port 3000 to `0.0.0.0` by default, which means it's already accessible from
-other devices on your LAN. No firewall or router config is needed for local network access.
-
-You can bookmark this URL on each device so nobody has to type the IP every time.
-
-## 7. Enable private search (optional but recommended)
+## 6. Enable private search (optional but recommended)
 
 SearXNG is already running as part of the stack. To connect it:
 
@@ -94,27 +81,50 @@ SearXNG is already running as part of the stack. To connect it:
    not localhost).
 4. Save and test with a query in a chat.
 
-## 8. Access from outside your home (optional)
+## 7. Set up remote access with Tailscale
 
-If you want to access fAImily when you're away from home, here are the two simplest
-free options:
+Your fAImily stack only runs on your home network by default. For your kid
+to reach it from school, a friend's house, or anywhere off your home wifi,
+you need a way to connect back in without exposing it to the open internet.
+We use Tailscale for this, since it keeps everything private and
+device-to-device, no public URL, no third party seeing your traffic.
 
-**Tailscale** — a private mesh VPN that connects your devices securely.
+1. Create a free account at [tailscale.com](https://tailscale.com) (free
+   tier covers up to 3 users and 100 devices, plenty for a family).
+2. Install Tailscale on the machine running your Docker stack (the same
+   Mac or server running `docker compose up`):
+    ```
+    curl -fsSL https://tailscale.com/install.sh | sh
+    sudo tailscale up
+    ```
+    On Mac, you can also just install the Tailscale app from the App Store
+    or tailscale.com/download and sign in through the menu bar icon.
+3. Follow the link it gives you to authenticate in your browser.
+4. Install the Tailscale app on each device that needs access: your kid's
+   laptop, tablet, or phone. Sign in with the same Tailscale account.
+5. Once both devices show as connected in your Tailscale admin console
+   (admin.tailscale.com), your kid's device can reach your server using its
+   Tailscale address, something like `http://100.x.x.x:3000`, from
+   anywhere with internet access, no port forwarding required.
+6. Optional: enable MagicDNS in the Tailscale admin console (DNS tab) so
+   your server gets a memorable name instead of a number, like
+   `http://faimily-server:3000`.
 
-1. Install [Tailscale](https://tailscale.com/download) on your server and each device.
-2. Sign in to the same Tailscale account on everything.
-3. From a remote device, open `http://<TAILSCALE_IP>:3000` (use the server's Tailscale IP,
-   which starts with `100.x.x.x`).
-4. Tailscale handles all the encryption and auth. No open ports needed.
+A few things worth knowing:
 
-**Cloudflare Tunnel** — a free tunnel that exposes your local server through Cloudflare's
-network without opening ports on your router.
-
-1. Install `cloudflared` on the server.
-2. Run: `cloudflared tunnel --url http://localhost:3000` for a quick ephemeral tunnel.
-3. Or set up a [permanent tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
-   with a custom domain.
-4. Access your instance at the Cloudflare-provided URL or your own domain.
+- Tailscale itself is not self-hosted. It relies on Tailscale's own
+  coordination servers to connect your devices, though the actual chat
+  traffic goes device-to-device, not through Tailscale's servers. This is a
+  reasonable tradeoff for the privacy you get versus opening ports on your
+  router.
+- By default, devices need to re-authenticate every 90 days. For a device
+  you trust long-term, like your own server, you can disable this in the
+  admin console under Machines, but consider leaving it on for your kid's
+  devices as an extra layer of control.
+- Do not use Cloudflare Tunnel or any other public-facing tunnel for this
+  setup. That exposes your server to the open internet, which works
+  against the "nothing leaves your home network" design this whole stack
+  is built around.
 
 ## Troubleshooting
 
@@ -126,12 +136,6 @@ personalized models built on top of it.
 **My kid can't see their own model.**
 Confirm their user account, not a group, was added under Read access on
 that specific model. Re-check step 3 above, this is the most common miss.
-
-**I can't reach the web UI from another device on my network.**
-Make sure you're using the server's LAN IP address, not `localhost`. Both devices must
-be on the same Wi-Fi or wired network. If you modified the `ports:` line in
-`docker-compose.yml` to use `127.0.0.1:3000:8080` instead of `3000:8080`, revert that
-change — `127.0.0.1` restricts connections to the local machine only.
 
 **Responses feel slow or repetitive.**
 Your hardware may be undersized for the model you pulled. See the "when to
